@@ -20,7 +20,7 @@ interface Candidate {
   name: string;
   position: string;
   company: string;
-  status: 'applied' | 'screening' | 'interview' | 'offer' | 'hired' | 'rejected';
+  currentStep: string;
   email: string;
   phone: string;
   notes: string;
@@ -33,12 +33,23 @@ interface AddCandidateDialogProps {
   companies: Company[];
 }
 
+const HIRING_STEPS = [
+  { id: 'application', label: 'Application Received' },
+  { id: 'hr_review', label: 'HR Screening' },
+  { id: 'technical_assessment', label: 'Technical Assessment' },
+  { id: 'manager_interview', label: 'Manager Interview' },
+  { id: 'final_interview', label: 'Final Interview' },
+  { id: 'offer', label: 'Offer Extended' },
+  { id: 'hired', label: 'Hired' },
+  { id: 'rejected', label: 'Not Selected' }
+];
+
 export function AddCandidateDialog({ open, onClose, onAdd, companies }: AddCandidateDialogProps) {
   const [formData, setFormData] = useState<Candidate>({
     name: "",
     position: "",
     company: "",
-    status: "applied",
+    currentStep: "application",
     email: "",
     phone: "",
     notes: ""
@@ -52,7 +63,7 @@ export function AddCandidateDialog({ open, onClose, onAdd, companies }: AddCandi
         name: "",
         position: "",
         company: "",
-        status: "applied",
+        currentStep: "application",
         email: "",
         phone: "",
         notes: ""
@@ -143,21 +154,20 @@ export function AddCandidateDialog({ open, onClose, onAdd, companies }: AddCandi
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="status">Initial Status</Label>
+              <Label htmlFor="currentStep">Initial Step</Label>
               <Select 
-                value={formData.status} 
-                onValueChange={(value: Candidate['status']) => handleInputChange("status", value)}
+                value={formData.currentStep} 
+                onValueChange={(value) => handleInputChange("currentStep", value)}
               >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="applied">Applied</SelectItem>
-                  <SelectItem value="screening">Screening</SelectItem>
-                  <SelectItem value="interview">Interview</SelectItem>
-                  <SelectItem value="offer">Offer</SelectItem>
-                  <SelectItem value="hired">Hired</SelectItem>
-                  <SelectItem value="rejected">Rejected</SelectItem>
+                  {HIRING_STEPS.map((step) => (
+                    <SelectItem key={step.id} value={step.id}>
+                      {step.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>

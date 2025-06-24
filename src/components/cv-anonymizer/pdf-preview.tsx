@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,8 +12,17 @@ import {
   Save, 
   RotateCcw,
   Eye,
-  Download
+  Download,
+  File,
+  ChevronDown
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { generateLatexCv } from "@/lib/latexUtils";
 
 interface StructuredData {
   summary: string;
@@ -67,6 +76,9 @@ interface PDFPreviewProps {
   anonymizationSettings?: AnonymizationOption[];
   onDataChange?: (data: StructuredData) => void;
   onDownloadPDF?: (data: StructuredData) => void;
+  onDownloadWord?: (data: StructuredData) => void;
+  onDownloadOverleaf?: (data: StructuredData) => void;
+  onDownloadCanva?: (data: StructuredData) => void;
 }
 
 export function PDFPreview({ 
@@ -74,14 +86,17 @@ export function PDFPreview({
   personalInfo, 
   anonymizationSettings, 
   onDataChange, 
-  onDownloadPDF 
+  onDownloadPDF,
+  onDownloadWord,
+  onDownloadOverleaf,
+  onDownloadCanva
 }: PDFPreviewProps) {
   const [editableData, setEditableData] = useState<StructuredData>(data);
   const [isEditing, setIsEditing] = useState(false);
   const [originalData, setOriginalData] = useState<StructuredData>(data);
 
   // Apply anonymization to text
-  const applyAnonymization = (text: string | undefined | null): string => {
+  const applyAnonymization = useCallback((text: string | undefined | null): string => {
     // Handle non-string inputs
     if (!text || typeof text !== 'string') {
       return String(text || '');
@@ -127,12 +142,33 @@ export function PDFPreview({
     });
     
     return anonymizedText;
-  };
+  }, [personalInfo, anonymizationSettings]);
 
   const escapeRegExp = (string: string): string => {
     // Ensure we have a string to work with
     const str = String(string || '');
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  };
+
+  const renderDescription = (description: string | string[] | undefined | null) => {
+    let items: string[] = [];
+    
+    if (Array.isArray(description)) {
+      items = description.filter(item => item && typeof item === 'string');
+    } else if (description && typeof description === 'string') {
+      items = description.split('\n');
+    } else if (description) {
+      // Convert any other type to string
+      items = [String(description)];
+    }
+
+    return items
+      .filter(item => item && item.trim())
+      .map((item, i) => {
+        const cleanItem = String(item).replace(/^-/, '').trim();
+        return cleanItem ? <li key={i}>{applyAnonymization(cleanItem)}</li> : null;
+      })
+      .filter(Boolean);
   };
 
   // Update editable data when anonymization settings change
@@ -170,7 +206,7 @@ export function PDFPreview({
     
     setEditableData(anonymizedData);
     setOriginalData(anonymizedData);
-  }, [data, anonymizationSettings, personalInfo]);
+  }, [data, anonymizationSettings, personalInfo, applyAnonymization]);
 
   const handleSave = () => {
     setIsEditing(false);
@@ -184,9 +220,45 @@ export function PDFPreview({
     setIsEditing(false);
   };
 
-  const handleDownload = () => {
+  const handleDownloadPDF = () => {
     if (onDownloadPDF) {
       onDownloadPDF(editableData);
+    }
+  };
+
+  const handleDownloadWord = () => {
+    if (onDownloadWord) {
+      onDownloadWord(editableData);
+    }
+  };
+
+  const handleDownloadOverleaf = () => {
+    const latexCode = generateLatexCv(editableData);
+
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = 'https://www.overleaf.com/docs';
+    form.target = '_blank'; // Open in a new tab
+
+    const input = document.createElement('textarea');
+    input.name = 'snip';
+    input.value = latexCode;
+    form.appendChild(input);
+
+    const filename = document.createElement('input');
+    filename.type = 'hidden';
+    filename.name = 'filename';
+    filename.value = 'Anonymized_CV.tex';
+    form.appendChild(filename);
+
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
+  };
+
+  const handleDownloadCanva = () => {
+    if (onDownloadCanva) {
+      onDownloadCanva(editableData);
     }
   };
 
@@ -251,10 +323,33 @@ export function PDFPreview({
                 Reset
               </Button>
             )}
-            <Button onClick={handleDownload}>
-              <Download className="w-4 h-4 mr-1" />
-              Download PDF
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button>
+                  <Download className="w-4 h-4 mr-2" />
+                  Download
+                  <ChevronDown className="w-4 h-4 ml-2" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem onClick={handleDownloadPDF}>
+                  <Download className="w-4 h-4 mr-2 text-red-600" />
+                  Download as PDF
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleDownloadWord}>
+                  <File className="w-4 h-4 mr-2 text-blue-600" />
+                  Download as Word
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleDownloadOverleaf}>
+                  <Download className="w-4 h-4 mr-2 text-green-600" />
+                  Export to Overleaf
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleDownloadCanva}>
+                  <Download className="w-4 h-4 mr-2 text-purple-600" />
+                  Export to Canva
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </CardTitle>
       </CardHeader>
@@ -341,9 +436,12 @@ export function PDFPreview({
                       </div>
                     ) : (
                       <>
-                        <p className="font-bold text-sm">{exp.job_title} - {exp.company}</p>
-                        <p className="text-xs text-gray-600 mb-1">{exp.location} | {exp.start_date} - {exp.end_date}</p>
-                        <p className="text-sm text-gray-700">{exp.description}</p>
+                        <p className="font-bold text-sm">{exp.job_title}</p>
+                        <p className="text-sm font-medium text-gray-800">{exp.company} - {exp.location}</p>
+                        <p className="text-xs text-gray-500 mb-2">{exp.start_date} - {exp.end_date}</p>
+                        <ul className="text-sm list-disc pl-5 space-y-1 text-gray-600">
+                          {renderDescription(exp.description)}
+                        </ul>
                       </>
                     )}
                   </div>
