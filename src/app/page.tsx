@@ -1,103 +1,151 @@
-import Image from "next/image";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { 
+  FileText, 
+  Users, 
+  Search,
+  Shield,
+  BarChart3,
+  Zap
+} from "lucide-react";
 
-export default function Home() {
+export default function HomePage() {
+  const features = [
+    {
+      title: "CV Anonymizer",
+      description: "Remove personal information from CVs to protect candidate privacy while showcasing their skills and experience.",
+      icon: FileText,
+      href: "/cv-anonymizer",
+      color: "bg-blue-500",
+      benefits: ["Privacy Protection", "GDPR Compliant", "PDF Processing"],
+      status: "Available"
+    },
+    {
+      title: "Hiring Status Dashboard",
+      description: "Track the entire recruitment process with real-time updates for candidates and hiring teams.",
+      icon: Users,
+      href: "/hiring-status",
+      color: "bg-green-500",
+      benefits: ["Real-time Updates", "Multi-party Access", "Process Tracking"],
+      status: "Available"
+    },
+    {
+      title: "Lead Generation",
+      description: "Find potential candidates on LinkedIn using natural language queries powered by Exa API.",
+      icon: Search,
+      href: "/lead-generation",
+      color: "bg-purple-500",
+      benefits: ["AI-Powered Search", "LinkedIn Integration", "Natural Language"],
+      status: "Available"
+    }
+  ];
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="space-y-12">
+      {/* Hero Section */}
+      <div className="text-center space-y-6">
+        <div className="inline-flex items-center space-x-2 bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium">
+          <Zap className="w-4 h-4" />
+          <span>Professional HR & Recruitment Platform</span>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        
+        <h1 className="text-4xl md:text-6xl font-bold text-gray-900 tracking-tight">
+          Streamline Your
+          <span className="text-blue-600"> Recruitment </span>
+          Process
+        </h1>
+        
+        <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          Complete platform for modern HR professionals and headhunters. Anonymize CVs, track hiring progress, and generate leads with AI-powered tools.
+        </p>
+
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700">
+            <Link href="/cv-anonymizer">
+              <FileText className="w-5 h-5 mr-2" />
+              Start Anonymizing CVs
+            </Link>
+          </Button>
+          <Button asChild variant="outline" size="lg">
+            <Link href="/hiring-status">
+              <BarChart3 className="w-5 h-5 mr-2" />
+              View Dashboard
+            </Link>
+          </Button>
+        </div>
+      </div>
+
+      {/* Features Grid */}
+      <div className="grid md:grid-cols-3 gap-8">
+        {features.map((feature, index) => (
+          <Card key={index} className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-shadow">
+            <div className={`absolute top-0 left-0 right-0 h-1 ${feature.color}`} />
+            
+            <CardHeader className="pb-4">
+              <div className="flex items-center justify-between mb-4">
+                <div className={`w-12 h-12 ${feature.color} rounded-lg flex items-center justify-center`}>
+                  <feature.icon className="w-6 h-6 text-white" />
+                </div>
+                <Badge variant="secondary" className="text-xs">
+                  {feature.status}
+                </Badge>
+              </div>
+              
+              <CardTitle className="text-xl">{feature.title}</CardTitle>
+              <CardDescription className="text-base">
+                {feature.description}
+              </CardDescription>
+            </CardHeader>
+
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                {feature.benefits.map((benefit, idx) => (
+                  <div key={idx} className="flex items-center space-x-2 text-sm text-gray-600">
+                    <Shield className="w-3 h-3 text-green-500" />
+                    <span>{benefit}</span>
+                  </div>
+                ))}
+              </div>
+
+              <Button asChild className="w-full" variant="outline">
+                <Link href={feature.href}>
+                  Get Started
+                  <feature.icon className="w-4 h-4 ml-2" />
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Stats Section */}
+      <div className="bg-white rounded-2xl p-8 shadow-lg border">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            Built for Modern Recruitment
+          </h2>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            Our platform combines cutting-edge AI technology with user-friendly design to revolutionize how you handle recruitment.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-8 text-center">
+          <div className="space-y-2">
+            <div className="text-3xl font-bold text-blue-600">100%</div>
+            <div className="text-sm text-gray-600">Privacy Compliant</div>
+          </div>
+          <div className="space-y-2">
+            <div className="text-3xl font-bold text-green-600">AI-Powered</div>
+            <div className="text-sm text-gray-600">Smart Automation</div>
+          </div>
+          <div className="space-y-2">
+            <div className="text-3xl font-bold text-purple-600">Real-time</div>
+            <div className="text-sm text-gray-600">Live Updates</div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
